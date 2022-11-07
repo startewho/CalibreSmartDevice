@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.32912.340
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalibreSmartDevice", "CalibreSmartDevice\CalibreSmartDevice.csproj", "{EE937D89-3742-4826-B858-C66E76B1A6F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CalibreSmartServer", "CalibreSmartServer\CalibreSmartServer.csproj", "{D128688E-7387-41E8-8AE4-C137672335BC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE937D89-3742-4826-B858-C66E76B1A6F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE937D89-3742-4826-B858-C66E76B1A6F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE937D89-3742-4826-B858-C66E76B1A6F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE937D89-3742-4826-B858-C66E76B1A6F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D128688E-7387-41E8-8AE4-C137672335BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D128688E-7387-41E8-8AE4-C137672335BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D128688E-7387-41E8-8AE4-C137672335BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D128688E-7387-41E8-8AE4-C137672335BC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9DD125A8-C7DD-486B-A805-49ECEB1E261B}
+	EndGlobalSection
+EndGlobal
