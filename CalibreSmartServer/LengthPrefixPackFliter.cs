@@ -13,11 +13,11 @@ namespace CalibreSmartServer
 
     /// <summary>
     /// 长度前缀的Json字符串形式
-    /// 100[{xxxx]]
+    /// 34[0, {"key0":value, "key1": value}]
     /// </summary>
     /// <typeparam name="TPackageInfo"></typeparam>
 
-    internal class LengthPrefixPackFliter<TPackageInfo> : PipelineFilterBase<TPackageInfo> where TPackageInfo : class
+    public class LengthPrefixPackFliter<TPackageInfo> : PipelineFilterBase<TPackageInfo> where TPackageInfo : class
     {
 
         private readonly ReadOnlyMemory<byte> _splitMark;
@@ -42,7 +42,7 @@ namespace CalibreSmartServer
             if (int.TryParse(lengthStr, out var length))
             {
                 reader.Advance(lengthPack.Length);
-                
+
                 if (reader.Remaining < length)
                     return null;
 

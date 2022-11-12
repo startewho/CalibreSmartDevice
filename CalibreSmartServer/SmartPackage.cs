@@ -14,16 +14,14 @@ namespace CalibreSmartServer
     }
 
 
-    internal class SmartPackage
+    public class SmartPackage
     {
 
-        public Op Op { get; set; }
+        public Opertion Op { get; set; }
 
         public int Length { get; set; }
 
         public string RawString { get; set; }
-
-       
 
         public FileBody File { get; set; }
     }
