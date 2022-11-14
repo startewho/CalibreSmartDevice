@@ -8,6 +8,7 @@ using SuperSocket.ProtoBase;
 using CalibreSmartServer;
 using System.Text;
 using System.Text.Encodings;
+using SuperSocket.Channel;
 
 namespace CalibreSmartDevice
 {
@@ -18,16 +19,22 @@ namespace CalibreSmartDevice
             var host = SuperSocketHostBuilder.Create<SmartPackage, SmartPackageFliter>(args)
                 .UseSessionHandler(async (s) =>
                 {
-                    var noop=new NOOP();
-                  
+                    
+                    IChannel<SmartPackage>? channel = s.Channel as IChannel<SmartPackage>;
+
+
+
                     var msg = IOp<NOOP>.OpString(noop);
                     await s.SendAsync(Encoding.UTF8.GetBytes(msg));
+
                 })
                 .UsePackageHandler(async (s, p) =>
                 {
-                   
+
+
                     // handle package
                     await Task.Delay(0);
+
                 })
                 .ConfigureSuperSocket(options =>
                 {
@@ -48,5 +55,33 @@ namespace CalibreSmartDevice
 
             await host.RunAsync();
         }
+
+
+
+        /// <summary>
+        /// 获取返回
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <returns></returns>
+
+        public static async Task<SmartPackage> ReceiveNext(IChannel<SmartPackage> channel)
+        {
+            SmartPackage? package = null;
+            if (channel != null)
+            {
+
+                var packages= channel.RunAsync().GetAsyncEnumerator();
+                if (await packages.MoveNextAsync())
+                {
+                    package=packages.Current;
+                }
+                
+            }
+             return package;
+        }
+
     }
+
+
+
 }
