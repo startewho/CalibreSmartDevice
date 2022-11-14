@@ -4,25 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CalibreSmartServer
+namespace CalibreSmartServer;
+
+
+
+public class FileBody
+{
+    public Stream Body { get; set; }
+}
+
+
+public class SmartPackage
 {
 
+    public OperationType Op { get; set; }
 
-    public class FileBody
-    {
-        public Stream Body { get; set; }
-    }
+    public int Length { get; set; }
 
+    public string RawString { get; set; }
 
-    public class SmartPackage
-    {
-
-        public Opertion Op { get; set; }
-
-        public int Length { get; set; }
-
-        public string RawString { get; set; }
-
-        public FileBody File { get; set; }
-    }
+    public FileBody File { get; set; }
 }
