@@ -9,6 +9,7 @@ using CalibreSmartServer;
 using System.Text;
 using System.Text.Encodings;
 using SuperSocket.Channel;
+using CalibreSmartServer.Message;
 
 namespace CalibreSmartDevice
 {
@@ -19,16 +20,19 @@ namespace CalibreSmartDevice
             var host = SuperSocketHostBuilder.Create<SmartPackage, SmartPackageFliter>(args)
                 .UseSessionHandler(async (s) =>
                 {
-                    
+
                     IChannel<SmartPackage>? channel = s.Channel as IChannel<SmartPackage>;
 
-                    if (channel!=null)
+                    if (channel != null)
                     {
-                        var p = await channel.GetPackageStream().ReceiveAsync();
+                        var initInform = new GetInitializationInfoReq();
+                        var msg=IOperation<GetInitializationInfoReq>.OpString(initInform);
+                        await s.SendAsync(Encoding.UTF8.GetBytes(msg));
+                        var p = await ReceiveNext(channel);
                     }
 
-                    var msg = IOp<NOOP>.OpString(noop);
-                    await s.SendAsync(Encoding.UTF8.GetBytes(msg));
+                   
+                    
 
                 })
                 .UsePackageHandler(async (s, p) =>
@@ -67,17 +71,14 @@ namespace CalibreSmartDevice
         /// <param name="channel"></param>
         /// <returns></returns>
 
-        public static async Task<SmartPackage> ReceiveNext(IChannel<SmartPackage> channel)
+        public static async Task<SmartPackage?> ReceiveNext(IChannel<SmartPackage> channel)
         {
             SmartPackage? package = null;
             if (channel != null)
             {
-
-                var packages= channel.RunAsync().GetAsyncEnumerator();
-                package = packages.Current;
-                await packages.MoveNextAsync();
+                package = await channel.RunAsync().GetAsyncEnumerator().ReceiveAsync();
             }
-             return package;
+            return package;
         }
 
     }
