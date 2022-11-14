@@ -22,7 +22,10 @@ namespace CalibreSmartDevice
                     
                     IChannel<SmartPackage>? channel = s.Channel as IChannel<SmartPackage>;
 
-
+                    if (channel!=null)
+                    {
+                        var p = await channel.GetPackageStream().ReceiveAsync();
+                    }
 
                     var msg = IOp<NOOP>.OpString(noop);
                     await s.SendAsync(Encoding.UTF8.GetBytes(msg));
@@ -71,11 +74,8 @@ namespace CalibreSmartDevice
             {
 
                 var packages= channel.RunAsync().GetAsyncEnumerator();
-                if (await packages.MoveNextAsync())
-                {
-                    package=packages.Current;
-                }
-                
+                package = packages.Current;
+                await packages.MoveNextAsync();
             }
              return package;
         }
