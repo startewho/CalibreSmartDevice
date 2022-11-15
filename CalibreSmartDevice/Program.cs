@@ -25,6 +25,7 @@ namespace CalibreSmartDevice
 
                     if (channel != null)
                     {
+                       
                         var initInform = new GetInitializationInfoReq();
                         var msg=IOperation<GetInitializationInfoReq>.OpString(initInform);
                         await s.SendAsync(Encoding.UTF8.GetBytes(msg));

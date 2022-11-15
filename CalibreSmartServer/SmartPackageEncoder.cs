@@ -8,11 +8,24 @@ using System.Threading.Tasks;
 
 namespace CalibreSmartServer
 {
-    //internal class SmartPackageEncoder : IPackageEncoder<in T>
+
+    ///// <summary>
+    ///// Encoder
+    ///// </summary>
+    ///// <typeparam name="T"></typeparam>
+    //public class SmartPackageEncoder : IPackageEncoder<object>
     //{
-    //    public int Encode(IBufferWriter<byte> writer, T pack)
+    //    public int Encode(IBufferWriter<byte> writer, object pack)
     //    {
-    //        throw new NotImplementedException();
+    //        if (pack is IOperation<object> op)
+
+    //        {
+
+    //        }
+    //        var encodePack = IOperation<T>.OpString(pack);
+    //        var bytes = Encoding.UTF8.GetBytes(encodePack);
+    //        writer.Write(bytes);
+    //        return bytes.Length;
     //    }
     //}
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SuperSocket.ProtoBase;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,26 @@ public class SmartPackageFliter:LengthPrefixPackFliter<SmartPackage>
 
     }
 
-    protected override SmartPackage DecodePackage(ref ReadOnlySequence<byte> buffer)
+    protected override SmartPackage? DecodePackage(ref ReadOnlySequence<byte> buffer)
     {
-        return base.DecodePackage(ref buffer);
+
+        var pack=buffer.GetString(Encoding.UTF8);
+        var commaIndex = pack.IndexOf(",");
+        if (commaIndex>-1)
+        {
+            var opstr = pack.Substring(1, commaIndex-1);
+            if (int.TryParse(opstr, out int opCode))
+            {
+                var opPack=pack.Substring(commaIndex+1,pack.Length-opstr.Length-3);
+
+                return new SmartPackage()
+                {
+                    Op = (OperationType)opCode,
+                    RawString = opPack,
+                };
+            } 
+        }
+        return null;
     }
 
 }
