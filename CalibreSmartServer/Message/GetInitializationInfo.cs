@@ -13,6 +13,7 @@ public class GetInitializationInfoReq : IOperation<GetInitializationInfoReq>
     public static OperationType Op => OperationType.GET_INITIALIZATION_INFO;
 
 
+
     public static GetInitializationInfoReq CreateDefault()
     {
         return new GetInitializationInfoReq();

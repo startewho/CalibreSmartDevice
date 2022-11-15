@@ -36,23 +36,25 @@ public enum OperationType
 
 }
 
-public interface IOperation<T> where T : IOperation<T>,new ()
+public interface IOperation<T> where T : IOperation<T>, new()
 {
     static abstract OperationType Op { get; }
 
 
     static sealed T FromString(string detail)
     {
-        return JsonSerializer.Deserialize<T>(detail);
+        T? result = default;
+        result = JsonSerializer.Deserialize<T>(detail);
+        return result!;
     }
 
     static virtual T CreateDefault()
     {
         return new T();
     }
-    
 
-     static sealed string OpString(T t)
+
+    static sealed string ToString(T t)
     {
         var builer = new StringBuilder();
         builer.Append($"[{(int)T.Op},");
@@ -73,7 +75,7 @@ public class NoOp : IOperation<NoOp>
     }
 }
 
-public class Ok:IOperation<Ok> 
+public class Ok : IOperation<Ok>
 {
     public static OperationType Op => OperationType.OK;
 

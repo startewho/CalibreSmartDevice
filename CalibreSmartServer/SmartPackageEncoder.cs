@@ -13,11 +13,11 @@ namespace CalibreSmartServer
     ///// Encoder
     ///// </summary>
     ///// <typeparam name="T"></typeparam>
-    //public class SmartPackageEncoder : IPackageEncoder<object>
+    //public class SmartPackageEncoder : IPackageEncoder<T> 
     //{
-    //    public int Encode(IBufferWriter<byte> writer, object pack)
+    //    public int Encode<T>(IBufferWriter<byte> writer, object pack) where T :IOperation<T>,new()
     //    {
-    //        if (pack is IOperation<object> op)
+    //        if (pack is IOperation<T> op)
 
     //        {
 

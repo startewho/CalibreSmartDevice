@@ -24,5 +24,5 @@ public class FreeSpaceRes : IOperation<FreeSpaceRes>
     public static OperationType Op => OperationType.FREE_SPACE;
 
     [JsonPropertyName("free_space_on_device")]
-    public int FreeSpaceOnDevice { get; set; }
+    public float FreeSpaceOnDevice { get; set; }
 }

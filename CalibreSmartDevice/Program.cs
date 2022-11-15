@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Encodings;
 using SuperSocket.Channel;
 using CalibreSmartServer.Message;
+using System.Threading.Channels;
 
 namespace CalibreSmartDevice
 {
@@ -29,32 +30,27 @@ namespace CalibreSmartDevice
                     {
 
                         var initInform = new GetInitializationInfoReq();
-                        var msg = IOperation<GetInitializationInfoReq>.OpString(initInform);
-                        await s.SendAsync(Encoding.UTF8.GetBytes(msg));
-                        var p = await ReceiveNext(channel);
-                        if (p?.Op == OperationType.OK)
+                        var initRes=await SendMessage< GetInitializationInfoReq,GetInitializationInfoRes>(s,channel,initInform);
+                        if (initRes==null)
                         {
-                            var initRes = IOperation<GetInitializationInfoRes>.FromString(p.Message);
-                            if (initRes != null)
-                            {
-                                var devInform = new GetDeviceInformationReq();
-                                msg = IOperation<GetDeviceInformationReq>.OpString(devInform);
-                                await s.SendAsync(Encoding.UTF8.GetBytes(msg));
-                                p = await ReceiveNext(channel);
-                                if (p?.Op == OperationType.OK)
-                                {
-                                    var devInformRes = IOperation<GetDeviceInformationRes>.FromString(p.Message);
-                                    if (devInformRes != null)
-                                    {
-                                        var freeSpace = new FreeSpaceReq();
-                                        msg = IOperation<FreeSpaceReq>.OpString(freeSpace);
-                                        await s.SendAsync(Encoding.UTF8.GetBytes(msg));
-                                    }
-
-
-                                }
-                            }
+                            Logger.LogError("初始化系统出错");
                         }
+
+                        var devInform = new GetDeviceInformationReq();
+                        var devRes = await SendMessage<GetDeviceInformationReq, GetDeviceInformationRes>(s, channel, devInform);
+                        if (initRes == null)
+                        {
+                            Logger.LogError("初始化设备出错");
+                        }
+
+                        var freeSpace = new FreeSpaceReq();
+                        var freeSpaceRes = await SendMessage<FreeSpaceReq, FreeSpaceRes>(s, channel, freeSpace);
+
+                        if (freeSpaceRes == null)
+                        {
+                            Logger.LogError("获取剩余出错");
+                        }
+                        
                     }
 
 
@@ -62,7 +58,7 @@ namespace CalibreSmartDevice
                 .UsePackageHandler(async (s, p) =>
                 {
 
-                    Logger.LogInformation($"Revice from client:Op:{p.Op},Message:{p.Message}");
+                    Logger.LogInformation($"Revice Package from client:Op:{p.Op},Message:{p.Message}");
                     // handle package
                     await Task.Delay(0);
 
@@ -90,7 +86,7 @@ namespace CalibreSmartDevice
 
 
         /// <summary>
-        /// 获取返回
+        /// 获取响应消息结果
         /// </summary>
         /// <param name="channel"></param>
         /// <returns></returns>
@@ -106,6 +102,36 @@ namespace CalibreSmartDevice
             return package;
         }
 
+
+
+
+
+
+       /// <summary>
+       /// 发送消息
+       /// </summary>
+       /// <typeparam name="R">请求</typeparam>
+       /// <typeparam name="E">响应</typeparam>
+       /// <param name="session"></param>
+       /// <param name="channel"></param>
+       /// <param name="req"></param>
+       /// <returns></returns>
+
+        public static async Task<E> SendMessage<R, E>(IAppSession session, IChannel<SmartPackage> channel, R req) where E : IOperation<E>, new() where R : IOperation<R>, new()
+        {
+            var msg = IOperation<R>.ToString(req);
+
+            await session.SendAsync(Encoding.UTF8.GetBytes(msg));
+
+            var p = await ReceiveNext(channel);
+
+            if (p?.Op==OperationType.OK)
+            {
+                var e = IOperation<E>.FromString(p.Message);
+                return e;
+            }
+            return default;
+        }
     }
 
 
