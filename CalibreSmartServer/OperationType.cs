@@ -40,6 +40,7 @@ public interface IOperation<T> where T : IOperation<T>,new ()
 {
     static abstract OperationType Op { get; }
 
+
     static sealed T FromString(string detail)
     {
         return JsonSerializer.Deserialize<T>(detail);

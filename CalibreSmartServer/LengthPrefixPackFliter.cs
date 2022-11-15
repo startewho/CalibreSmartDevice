@@ -32,32 +32,30 @@ public class LengthPrefixPackFliter<TPackageInfo> : PipelineFilterBase<TPackageI
     public override TPackageInfo? Filter(ref SequenceReader<byte> reader)
     {
 
-        if (!reader.TryReadTo(out ReadOnlySequence<byte> prePack, _splitMark.Span, advancePastDelimiter: false))
+        if (!reader.TryReadTo(out ReadOnlySequence<byte> markSeq, _splitMark.Span, advancePastDelimiter: false))
         {
             return null;
         }
 
+        var len = markSeq.GetString(Encoding.UTF8);
 
-        var lengthStr = prePack.GetString(Encoding.UTF8);
-
-        if (int.TryParse(lengthStr, out var length))
+        if (int.TryParse(len, out var msgLength))
         {
 
-            if (reader.Remaining < length)
+            if (reader.Remaining < msgLength)
             {
-                reader.Rewind(prePack.Length);
+                reader.Rewind(markSeq.Length);// 回退
                 return null;
             }
 
-            var pack = reader.Sequence.Slice(prePack.Length, length);
-
+            var msgSeq = reader.Sequence.Slice(markSeq.Length, msgLength);
             try
             {
-                return DecodePackage(ref pack);
+                return DecodePackage(ref msgSeq);
             }
             finally
             {
-                reader.Advance(length);
+                reader.Advance(msgLength);//消费消息
             }
 
         }

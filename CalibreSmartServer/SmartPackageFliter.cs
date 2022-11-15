@@ -1,10 +1,6 @@
 ﻿using SuperSocket.ProtoBase;
-using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace CalibreSmartServer;
 
@@ -22,15 +18,14 @@ public class SmartPackageFliter:LengthPrefixPackFliter<SmartPackage>
         var commaIndex = pack.IndexOf(",");
         if (commaIndex>-1)
         {
-            var opstr = pack.Substring(1, commaIndex-1);
-            if (int.TryParse(opstr, out int opCode))
+            var op = pack.Substring(1, commaIndex-1);
+            if (int.TryParse(op, out int code))
             {
-                var opPack=pack.Substring(commaIndex+1,pack.Length-opstr.Length-3);
-
+                var msg=pack.Substring(commaIndex+1,pack.Length-op.Length-3);//,之后到最后]之前
                 return new SmartPackage()
                 {
-                    Op = (OperationType)opCode,
-                    RawString = opPack,
+                    Op = (OperationType)code,
+                    Message = msg,
                 };
             } 
         }

@@ -21,7 +21,7 @@ public class SmartPackage
 
     public int Length { get; set; }
 
-    public string RawString { get; set; }
+    public string Message { get; set; }
 
     public FileBody File { get; set; }
 }

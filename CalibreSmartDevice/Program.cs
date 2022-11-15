@@ -15,31 +15,54 @@ namespace CalibreSmartDevice
 {
     class Program
     {
+        public static ILogger Logger { get; private set; }
         static async Task Main(string[] args)
         {
             var host = SuperSocketHostBuilder.Create<SmartPackage, SmartPackageFliter>(args)
                 .UseSessionHandler(async (s) =>
                 {
+                    Logger = s.GetDefaultLogger();
 
                     IChannel<SmartPackage>? channel = s.Channel as IChannel<SmartPackage>;
 
                     if (channel != null)
                     {
-                       
+
                         var initInform = new GetInitializationInfoReq();
-                        var msg=IOperation<GetInitializationInfoReq>.OpString(initInform);
+                        var msg = IOperation<GetInitializationInfoReq>.OpString(initInform);
                         await s.SendAsync(Encoding.UTF8.GetBytes(msg));
                         var p = await ReceiveNext(channel);
+                        if (p?.Op == OperationType.OK)
+                        {
+                            var initRes = IOperation<GetInitializationInfoRes>.FromString(p.Message);
+                            if (initRes != null)
+                            {
+                                var devInform = new GetDeviceInformationReq();
+                                msg = IOperation<GetDeviceInformationReq>.OpString(devInform);
+                                await s.SendAsync(Encoding.UTF8.GetBytes(msg));
+                                p = await ReceiveNext(channel);
+                                if (p?.Op == OperationType.OK)
+                                {
+                                    var devInformRes = IOperation<GetDeviceInformationRes>.FromString(p.Message);
+                                    if (devInformRes != null)
+                                    {
+                                        var freeSpace = new FreeSpaceReq();
+                                        msg = IOperation<FreeSpaceReq>.OpString(freeSpace);
+                                        await s.SendAsync(Encoding.UTF8.GetBytes(msg));
+                                    }
+
+
+                                }
+                            }
+                        }
                     }
 
-                   
-                    
 
                 })
                 .UsePackageHandler(async (s, p) =>
                 {
 
-
+                    Logger.LogInformation($"Revice from client:Op:{p.Op},Message:{p.Message}");
                     // handle package
                     await Task.Delay(0);
 
@@ -79,6 +102,7 @@ namespace CalibreSmartDevice
             {
                 package = await channel.RunAsync().GetAsyncEnumerator().ReceiveAsync();
             }
+            Logger.LogInformation($"Revice from client:Op:{package?.Op},Message:{package?.Message}");
             return package;
         }
 
