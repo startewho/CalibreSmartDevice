@@ -19,6 +19,12 @@ namespace CalibreSmartDevice
         public static ILogger Logger { get; private set; }
         static async Task Main(string[] args)
         {
+            var broadcastServer = new BroadcastServer(9090,8080);
+
+            _ = Task.Run(() =>
+            {
+                broadcastServer.Start();
+            });
             var host = SuperSocketHostBuilder.Create<SmartPackage, SmartPackageFliter>(args)
                 .UseSessionHandler(async (s) =>
                 {
@@ -81,6 +87,8 @@ namespace CalibreSmartDevice
                 }).Build();
 
             await host.RunAsync();
+
+            broadcastServer.Stop();
         }
 
 
